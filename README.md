@@ -25,6 +25,7 @@ Robust ensemble: tensor(0.1460)
 Standard ensemble: tensor(0.1480)
 ```
 
-![](imgs/fort2024.png)
+![](imgs/fort2024a.png)
+![](imgs/fort2024b.png)
 
 
