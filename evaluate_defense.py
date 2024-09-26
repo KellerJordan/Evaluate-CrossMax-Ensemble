@@ -65,21 +65,21 @@ if __name__ == '__main__':
 
     test_loader = airbench.CifarLoader('cifar10', train=False)
 
-    print('Training 10 models for use in standard and robust ensemblees...')
+    print('Training 10 models for use in standard and CrossMax ensembles...')
     models = [airbench.train94(verbose=False) for _ in tqdm(range(10))]
 
     standard_ensemble = Ensemble(models).eval()
-    robust_ensemble = CrossMaxEnsemble(models).eval()
+    crossmax_ensemble = CrossMaxEnsemble(models).eval()
 
     inputs, labels = next(iter(test_loader))
     new_labels = (labels + 1 + torch.randint(9, labels.shape, device=labels.device)) % 10
 
-    print('Generating first batch of adversarial examples using PGD against the robust ensemble...')
-    adv_delta = pgd(inputs, new_labels, robust_ensemble)
+    print('Generating first batch of adversarial examples using PGD against the CrossMax ensemble...')
+    adv_delta = pgd(inputs, new_labels, crossmax_ensemble)
     adv_inputs = inputs + adv_delta
     print('Accuracy on first batch of adversarial examples:')
     with torch.no_grad():
-        print('CrossMax ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('CrossMax ensemble:', (crossmax_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
         print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
     print('Generating second batch of adversarial examples using PGD against the standard ensemble...')
@@ -87,6 +87,6 @@ if __name__ == '__main__':
     adv_inputs = inputs + adv_delta
     print('Accuracy on second batch of adversarial examples:')
     with torch.no_grad():
-        print('CrossMax ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('CrossMax ensemble:', (crossmax_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
         print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
