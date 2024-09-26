@@ -44,8 +44,8 @@ class Ensemble(nn.Module):
         super().__init__()
         self.nets = nn.ModuleList(nets)
     def forward(self, x):
-        xx = torch.stack([net(x) for net in self.nets])
-        return xx.mean(0)
+        xx = torch.stack([net(x) for net in self.nets], dim=1)
+        return xx.mean(1)
 
 class RobustEnsemble(nn.Module):
     """
@@ -56,10 +56,10 @@ class RobustEnsemble(nn.Module):
         super().__init__()
         self.nets = nn.ModuleList(nets)
     def forward(self, x):
-        xx = torch.stack([net(x) for net in self.nets])
+        xx = torch.stack([net(x) for net in self.nets], dim=1)
         xx = xx - xx.amax(dim=2, keepdim=True)
-        xx = xx - xx.amax(dim=0, keepdim=True)
-        return xx.median(dim=0).values
+        xx = xx - xx.amax(dim=1, keepdim=True)
+        return xx.median(dim=1).values
 
 if __name__ == '__main__':
 
