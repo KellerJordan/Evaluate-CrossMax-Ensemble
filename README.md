@@ -1,6 +1,6 @@
 # Evaluate-Robust-Ensemble
 
-This code evaluates the robust accuracy of the `Robust Ensemble` defense technique proposed by Fort et al. (2024).
+This code evaluates the robust accuracy of the `Robust Ensemble` defense technique proposed by Fort et al. (2024) [https://arxiv.org/pdf/2408.05446](https://arxiv.org/pdf/2408.05446).
 
 We evaluate the new technique using a transfer attack from a standard ensemble. This reduces the
 robust accuracy of the Robust Ensemble from ~75% to ~14%.
