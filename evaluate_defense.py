@@ -87,8 +87,8 @@ if __name__ == '__main__':
     adv_inputs = inputs + adv_delta
     print('Accuracy on first batch of adversarial examples:')
     with torch.no_grad():
-        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean())
-        print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean())
+        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
     print('Generating second batch of adversarial examples using PGD against the standard ensemble...')
     inputs, labels = next(iter(test_loader))
@@ -97,6 +97,6 @@ if __name__ == '__main__':
     adv_inputs = inputs + adv_delta
     print('Accuracy on second batch of adversarial examples:')
     with torch.no_grad():
-        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean())
-        print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean())
+        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
