@@ -1,6 +1,6 @@
 # Evaluate-CrossMax-Ensemble
 
-This code evaluates the robust accuracy of the `CrossMax Ensemble` defense technique proposed by [Fort et al. (2024)](https://arxiv.org/abs/2408.05446).
+This code evaluates the robust accuracy of the `CrossMax Ensemble` defense technique ([Fort et al., 2024](https://arxiv.org/abs/2408.05446)).
 
 To avoid gradient masking effects, we evaluate the CrossMax ensemble using an attack transferred from the corresponding standard ensemble.
 We find that this reduces the robust accuracy of the CrossMax Ensemble from ~77% to ~2%.
