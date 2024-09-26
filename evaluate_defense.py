@@ -54,11 +54,6 @@ class RobustEnsemble(nn.Module):
     """
     Alternate ensembling mechanism proposed by Fort et al. (2024)
     https://arxiv.org/abs/2408.05446
-    
-    ...we propose a robust aggregation mechanism based on Vickrey auction that we call CrossMax...
-    ...Our robust median ensemble, CrossMax, gives very non-trivial adversarial accuracy
-    gains to ensembles of individually brittle models. For 𝐿∞ = 6/255, its CIFAR-10 robust accuracy is
-    17-fold larger than standard ensembling... (Fort et al. 2024)
     """
     def __init__(self, nets):
         super().__init__()
