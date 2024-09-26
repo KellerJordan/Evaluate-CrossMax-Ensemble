@@ -10,7 +10,7 @@ CIFAR_STD = torch.tensor((0.2470, 0.2435, 0.2616))
 normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
 denormalize = T.Normalize(-CIFAR_MEAN / CIFAR_STD, 1 / CIFAR_STD)
 
-def pgd(inputs, targets, model, r=8/255, step_size=1/255, steps=100, eps=1e-5):
+def pgd(inputs, targets, model, r=6/255, step_size=1/255, steps=100, eps=1e-5):
     """
     L^\infty bounded PGD attack
     """
@@ -61,7 +61,6 @@ class RobustEnsemble(nn.Module):
         xx = xx - xx.amax(dim=0, keepdim=True)
         return xx.median(dim=0).values
 
-
 if __name__ == '__main__':
 
     test_loader = airbench.CifarLoader('cifar10', train=False)
@@ -72,9 +71,10 @@ if __name__ == '__main__':
     standard_ensemble = Ensemble(models).eval()
     robust_ensemble = RobustEnsemble(models).eval()
 
-    print('Generating first batch of adversarial examples using PGD against the robust ensemble...')
     inputs, labels = next(iter(test_loader))
-    new_labels = labels[torch.randperm(len(labels))]
+    new_labels = (labels + 1 + torch.randint(9, labels.shape, device=labels.device)) % 10
+
+    print('Generating first batch of adversarial examples using PGD against the robust ensemble...')
     adv_delta = pgd(inputs, new_labels, robust_ensemble)
     adv_inputs = inputs + adv_delta
     print('Accuracy on first batch of adversarial examples:')
@@ -83,8 +83,6 @@ if __name__ == '__main__':
         print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
     print('Generating second batch of adversarial examples using PGD against the standard ensemble...')
-    inputs, labels = next(iter(test_loader))
-    new_labels = labels[torch.randperm(len(labels))]
     adv_delta = pgd(inputs, new_labels, standard_ensemble)
     adv_inputs = inputs + adv_delta
     print('Accuracy on second batch of adversarial examples:')
