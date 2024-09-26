@@ -9,20 +9,18 @@ robust accuracy of the Robust Ensemble from ~75% to ~14%.
 `python evaluate_defense.py`
 
 ```
-Training 10 models for use in standard and robust ensemblees...
-100%|█████████████████████████| 10/10 [00:40<00:00,  4.08s/it]
-
+Training 10 models for use in standard and robust ensemblees...                                                                                                                                                     
+100%|█████████████████████████| 10/10 [00:53<00:00,  5.32s/it]
 Generating first batch of adversarial examples using PGD against the robust ensemble...
-100%|███████████████████████| 100/100 [00:04<00:00, 20.39it/s]
+100%|███████████████████████| 100/100 [00:04<00:00, 20.22it/s]
 Accuracy on first batch of adversarial examples:
-Robust ensemble: tensor(0.7500)
-Standard ensemble: tensor(0.7560)
-
+Robust ensemble: tensor(0.7180)
+Standard ensemble: tensor(0.7380)
 Generating second batch of adversarial examples using PGD against the standard ensemble...
-100%|███████████████████████| 100/100 [00:04<00:00, 21.36it/s]
+100%|███████████████████████| 100/100 [00:04<00:00, 21.42it/s]
 Accuracy on second batch of adversarial examples:
-Robust ensemble: tensor(0.1460)
-Standard ensemble: tensor(0.1480)
+Robust ensemble: tensor(0.1320)
+Standard ensemble: tensor(0.1280)
 ```
 
 ![](imgs/fort2024a.png)

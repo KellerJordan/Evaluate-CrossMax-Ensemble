@@ -10,10 +10,13 @@ CIFAR_STD = torch.tensor((0.2470, 0.2435, 0.2616))
 normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
 denormalize = T.Normalize(-CIFAR_MEAN / CIFAR_STD, 1 / CIFAR_STD)
 
-def pgd(inputs, targets, model, r=0.5, step_size=0.1, steps=100, eps=1e-5):
+def pgd(inputs, targets, model, r=8/255, step_size=1/255, steps=100, eps=1e-5):
+    """
+    L^\infty bounded PGD attack
+    """
     delta = torch.zeros_like(inputs, requires_grad=True)
-    norm_r = 4 * r # radius converted into normalized pixel space
-    norm_step_size = 4 * step_size
+    normalized_r = 4 * r
+    normalized_step_size = 4 * step_size
     
     for step in tqdm(range(steps)):
     
@@ -22,19 +25,13 @@ def pgd(inputs, targets, model, r=0.5, step_size=0.1, steps=100, eps=1e-5):
         loss = F.cross_entropy(output, targets, reduction='none').sum()
         loss.backward()
 
-        # normalize gradient
-        grad_norm = delta.grad.reshape(len(delta), -1).norm(dim=1)
-        unit_grad = delta.grad / (grad_norm[:, None, None, None] + eps)
-    
-        # take step in unit-gradient direction with scheduled step size
-        delta.data -= norm_step_size * unit_grad
-
-        # project to r-sphere
-        delta_norm = delta.data.reshape(len(delta), -1).norm(dim=1)
-        mask = (delta_norm > norm_r)
-        delta.data[mask] = norm_r * delta.data[mask] / (delta_norm[mask, None, None, None] + eps)
+        # take an update step using the sign of the gradient
+        delta.data -= normalized_step_size * delta.grad.sign()
         
-        # project to pixel-space
+        # project to the L^\infty ball of radius r
+        delta.data = delta.data.clamp(-normalized_r, normalized_r)
+
+        # project to pixel-space i.e. [0, 1]
         delta.data = normalize(denormalize(inputs + delta.data).clip(0, 1)) - inputs
 
     return delta.data
@@ -78,7 +75,7 @@ if __name__ == '__main__':
     print('Generating first batch of adversarial examples using PGD against the robust ensemble...')
     inputs, labels = next(iter(test_loader))
     new_labels = labels[torch.randperm(len(labels))]
-    adv_delta = pgd(inputs, new_labels, robust_ensemble, r=0.5, steps=100, step_size=0.2)
+    adv_delta = pgd(inputs, new_labels, robust_ensemble)
     adv_inputs = inputs + adv_delta
     print('Accuracy on first batch of adversarial examples:')
     with torch.no_grad():
@@ -88,7 +85,7 @@ if __name__ == '__main__':
     print('Generating second batch of adversarial examples using PGD against the standard ensemble...')
     inputs, labels = next(iter(test_loader))
     new_labels = labels[torch.randperm(len(labels))]
-    adv_delta = pgd(inputs, new_labels, standard_ensemble, r=0.5, steps=100, step_size=0.2)
+    adv_delta = pgd(inputs, new_labels, standard_ensemble)
     adv_inputs = inputs + adv_delta
     print('Accuracy on second batch of adversarial examples:')
     with torch.no_grad():
