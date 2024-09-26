@@ -47,7 +47,7 @@ class Ensemble(nn.Module):
         xx = torch.stack([net(x) for net in self.nets], dim=1)
         return xx.mean(1)
 
-class RobustEnsemble(nn.Module):
+class CrossMaxEnsemble(nn.Module):
     """
     Alternate ensembling mechanism proposed by Fort et al. (2024)
     https://arxiv.org/abs/2408.05446
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     models = [airbench.train94(verbose=False) for _ in tqdm(range(10))]
 
     standard_ensemble = Ensemble(models).eval()
-    robust_ensemble = RobustEnsemble(models).eval()
+    robust_ensemble = CrossMaxEnsemble(models).eval()
 
     inputs, labels = next(iter(test_loader))
     new_labels = (labels + 1 + torch.randint(9, labels.shape, device=labels.device)) % 10
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     adv_inputs = inputs + adv_delta
     print('Accuracy on first batch of adversarial examples:')
     with torch.no_grad():
-        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('CrossMax ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
         print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
     print('Generating second batch of adversarial examples using PGD against the standard ensemble...')
@@ -87,6 +87,6 @@ if __name__ == '__main__':
     adv_inputs = inputs + adv_delta
     print('Accuracy on second batch of adversarial examples:')
     with torch.no_grad():
-        print('Robust ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
+        print('CrossMax ensemble:', (robust_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
         print('Standard ensemble:', (standard_ensemble(adv_inputs).argmax(1) == labels).float().mean().cpu())
 
