@@ -1,8 +1,9 @@
 # Evaluate-Robust-Ensemble
 
-This code evaluates the Robust Ensemble technique proposed by Fort et al. (2024) using
-a transfer attack from a standard ensemble.
-This attack reduces the robust accuracy of the Robust Ensemble from ~75% to ~14%.
+This code evaluates the robust accuracy of the Robust Ensemble defense technique proposed by Fort et al. (2024).
+
+It turns out that if you use a transfer attack from a standard ensemble, you can reduce the robust accuracy
+of the Robust Ensemble from ~75% to ~14%.
 
 
 `python evaluate_defense.py`
