@@ -2,7 +2,7 @@
 
 This code evaluates the robust accuracy of the `CrossMax Ensemble` defense technique proposed by [Fort et al. (2024)](https://arxiv.org/abs/2408.05446).
 
-We evaluate the new technique using a transfer attack from a standard ensemble. This reduces the
+To avoid gradient masking effects, we evaluate the CrossMax ensemble using a transfer attack from the same standard ensemble. This reduces the
 robust accuracy of the CrossMax Ensemble from ~77% to ~2%.
 
 Presumably the reason our initial accuracy for the CrossMax ensemble (77%) is higher than theirs is because we only use PGD whereas they use
