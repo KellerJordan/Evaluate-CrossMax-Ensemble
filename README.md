@@ -5,6 +5,9 @@ This code evaluates the robust accuracy of the `CrossMax Ensemble` defense techn
 We evaluate the new technique using a transfer attack from a standard ensemble. This reduces the
 robust accuracy of the CrossMax Ensemble from ~77% to ~2%.
 
+Presumably we get a higher accurcy (77%) for the CrossMax ensemble because we only use PGD whereas they use APGD-T attack,
+which perhaps is able to somewhat compensate for the gradient masking effect.
+
 
 `python evaluate_defense.py`
 
